@@ -26,22 +26,49 @@ hvac-system/
 
 ```bash
 # Clone and install dependencies
-git clone <repository-url>
-cd hvac-system
+git clone https://github.com/Wastopian/hvac-smart-control.git
+cd hvac-smart-control
 npm install
 
 # Start backend server
-cd backend
-npm run dev
+cd backend && PORT=3003 npm run dev
 
 # Start frontend development server
-cd frontend
-npm start
+cd frontend && npm run dev:vite
 
 # Upload firmware to ESP32
 cd device
 pio run --target upload
 ```
+
+### Access Points
+- **Frontend**: http://localhost:3002 (or next available port)
+- **Backend API**: http://localhost:3003
+- **Health Check**: http://localhost:3003/health
+
+## 📤 GitHub Integration
+
+This project is configured for automatic GitHub synchronization:
+
+### Push Changes to GitHub
+
+```bash
+# Method 1: Auto-push with custom message
+./scripts/auto-push.sh "Your commit message here"
+
+# Method 2: Quick push with timestamp
+./scripts/quick-push.sh
+
+# Method 3: Manual git commands
+git add .
+git commit -m "Your message"
+git push origin master
+```
+
+### Repository Information
+- **GitHub Repository**: https://github.com/Wastopian/hvac-smart-control
+- **Owner**: Wastopian
+- **Visibility**: Public
 
 ## 📱 Features
 
