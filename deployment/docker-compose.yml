@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+  # MQTT Broker
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    container_name: hvac-mqtt
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    command: mosquitto -c /mosquitto/config/mosquitto.conf
+
+  # Backend API Server
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: hvac-backend
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - DATABASE_PATH=/app/data/hvac.db
+      - MQTT_BROKER_URL=mqtt://mosquitto:1883
+      - FRONTEND_URL=http://localhost:3000
+    volumes:
+      - backend-data:/app/data
+    depends_on:
+      - mosquitto
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend (for production deployment)
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: hvac-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    environment:
+      - REACT_APP_API_URL=http://localhost:3001
+    depends_on:
+      - backend
+
+  # Optional: InfluxDB for time-series data (future expansion)
+  influxdb:
+    image: influxdb:2.7-alpine
+    container_name: hvac-influxdb
+    restart: unless-stopped
+    ports:
+      - "8086:8086"
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=hvac-admin-2023
+      - DOCKER_INFLUXDB_INIT_ORG=hvac-org
+      - DOCKER_INFLUXDB_INIT_BUCKET=sensor-data
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=hvac-super-secret-auth-token
+    volumes:
+      - influxdb-storage:/var/lib/influxdb2
+      - influxdb-config:/etc/influxdb2
+    profiles:
+      - "extended"
+
+  # Optional: Grafana for analytics dashboard (future expansion)
+  grafana:
+    image: grafana/grafana:10.0.0
+    container_name: hvac-grafana
+    restart: unless-stopped
+    ports:
+      - "3030:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=hvac-admin-2023
+      - GF_INSTALL_PLUGINS=grafana-influxdb-08-datasource
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources
+    depends_on:
+      - influxdb
+    profiles:
+      - "extended"
+
+volumes:
+  backend-data:
+    driver: local
+  influxdb-storage:
+    driver: local
+  influxdb-config:
+    driver: local
+  grafana-storage:
+    driver: local
+
+networks:
+  default:
+    name: hvac-network 

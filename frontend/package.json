@@ -1,0 +1,72 @@
+{
+  "name": "@hvac/frontend",
+  "version": "1.0.0",
+  "description": "Smart HVAC System Frontend",
+  "private": true,
+  "dependencies": {
+    "@hvac/shared": "file:../shared",
+    "@react-three/drei": "^9.122.0",
+    "@react-three/fiber": "^8.18.0",
+    "@tanstack/react-query": "^4.29.19",
+    "axios": "^1.4.0",
+    "clsx": "^2.0.0",
+    "date-fns": "^2.30.0",
+    "framer-motion": "^10.12.18",
+    "gsap": "^3.13.0",
+    "lucide-react": "^0.263.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.4.1",
+    "react-router-dom": "^6.14.2",
+    "tailwind-merge": "^1.14.0",
+    "three": "^0.154.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.4",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/node": "^20.4.2",
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@types/three": "^0.154.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react": "^4.0.3",
+    "autoprefixer": "^10.4.14",
+    "eslint": "^8.45.0",
+    "postcss": "^8.4.27",
+    "tailwindcss": "^3.3.3",
+    "typescript": "^4.9.5",
+    "vite": "^4.4.5",
+    "ws": "^8.18.2"
+  },
+  "scripts": {
+    "dev": "node dev-server.js",
+    "dev:vite": "vite",
+    "start": "node dev-server.js",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "demo": "cd public && python3 -m http.server 8080",
+    "lint": "eslint src/**/*.{ts,tsx}",
+    "lint:fix": "eslint src/**/*.{ts,tsx} --fix"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
